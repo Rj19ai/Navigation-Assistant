@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat Translate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        @font-face {
+            font-family: 'Devanagari';
+            src: url('https://fonts.gstatic.com/s/notosansdevanagari/v21/TuGoUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3NaR6qy.woff2') format('woff2');
+        }
+
+        .dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .traditional {
+            background-image: url('https://www.transparenttextures.com/patterns/indian-flower.png');
+        }
+
+        .modern {
+            background: linear-gradient(135deg, #FF9933, #ffffff, #138808);
+        }
+
+        .offline-badge {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-['Poppins'] min-h-screen bg-gray-50">
+    <!-- Main Screen -->
+    <div class="min-h-screen p-6">
+        <div class="max-w-3xl mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-orange-600">Bharat Bridge</h1>
+                <select id="language-select" class="p-2 rounded-lg border-2 border-orange-400 w-64">
+                    <option value="english">English (Angrezi)</option>
+                    <option value="hindi">हिंदी (Hindi)</option>
+                    <option value="tamil">தமிழ் (Tamil)</option>
+                    <option value="telugu">తెలుగు (Telugu)</option>
+                    <option value="bengali">বাংলা (Bengali)</option>
+                    <option value="marathi">मराठी (Marathi)</option>
+                    <option value="gujarati">ગુજરાતી (Gujarati)</option>
+                    <option value="kannada">ಕನ್ನಡ (Kannada)</option>
+                    <option value="odia">ଓଡ଼ିଆ (Odia)</option>
+                    <option value="malayalam">മലയാളം (Malayalam)</option>
+                    <option value="punjabi">ਪੰਜਾਬੀ (Punjabi)</option>
+                    <option value="assamese">অসমীয়া (Assamese)</option>
+                    <option value="sanskrit">संस्कृतम् (Sanskrit)</option>
+                </select>
+            </div>
+
+            <!-- Theme Controls -->
+            <div class="flex justify-between mb-6">
+                <div class="theme-controls space-x-4">
+                    <button onclick="setTheme('modern')" class="px-4 py-2 rounded bg-blue-500 text-white">Modern</button>
+                    <button onclick="setTheme('traditional')" class="px-4 py-2 rounded bg-orange-500 text-white">Traditional</button>
+                </div>
+                <button onclick="toggleDarkMode()" class="px-4 py-2 rounded bg-gray-800 text-white">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+            </div>
+
+            <!-- Offline Badge -->
+            <div class="offline-badge bg-red-500 text-white p-2 rounded mb-4 text-center">
+                Offline Mode - Limited Features Available
+            </div>
+
+            <!-- Translation Input -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <textarea id="input-text" class="w-full p-4 rounded border-2 border-gray-300 mb-4" 
+                    placeholder="Type or paste text to translate..."></textarea>
+                
+                <div class="flex flex-wrap gap-4 mb-4">
+                    <button onclick="startVoiceInput()" class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded">
+                        <i class="bi bi-mic-fill"></i> Voice Input
+                    </button>
+                    <button onclick="captureImage()" class="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded">
+                        <i class="bi bi-camera-fill"></i> Capture Text
+                    </button>
+                    <button onclick="translate()" class="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded">
+                        <i class="bi bi-translate"></i> Translate
+                    </button>
+                </div>
+
+                <div id="translation-output" class="p-4 bg-gray-100 rounded min-h-[100px]"></div>
+                
+                <div class="mt-4 flex justify-between">
+                    <button onclick="speak()" class="flex items-center gap-2 bg-purple-500 text-white px-4 py-2 rounded">
+                        <i class="bi bi-volume-up-fill"></i> Listen
+                    </button>
+                    <select id="voice-select" class="border-2 border-gray-300 rounded px-2">
+                        <option value="male">Male Voice</option>
+                        <option value="female">Female Voice</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quick Phrases -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4">Quick Phrases</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="translatePhrase(this.innerText)" class="p-3 bg-gray-100 rounded hover:bg-gray-200">
+                        Where is the restroom?
+                    </button>
+                    <button onclick="translatePhrase(this.innerText)" class="p-3 bg-gray-100 rounded hover:bg-gray-200">
+                        How do I reach the nearest bus stop?
+                    </button>
+                    <button onclick="translatePhrase(this.innerText)" class="p-3 bg-gray-100 rounded hover:bg-gray-200">
+                        Can you help me?
+                    </button>
+                    <button onclick="translatePhrase(this.innerText)" class="p-3 bg-gray-100 rounded hover:bg-gray-200">
+                        Thank you very much
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Management
+        function setTheme(theme) {
+            document.body.className = theme;
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Translation Features
+        function translate() {
+            const input = document.getElementById('input-text').value;
+            const output = document.getElementById('translation-output');
+            // Simulate translation
+            output.innerText = `Translated: ${input}`;
+        }
+
+        function translatePhrase(phrase) {
+            document.getElementById('input-text').value = phrase;
+            translate();
+        }
+
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.onresult = (event) => {
+                    document.getElementById('input-text').value = event.results[0][0].transcript;
+                };
+                recognition.start();
+            } else {
+                alert('Speech recognition not supported in this browser');
+            }
+        }
+
+        function speak() {
+            const text = document.getElementById('translation-output').innerText;
+            const voice = document.getElementById('voice-select').value;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = speechSynthesis.getVoices().find(v => v.name.includes(voice));
+            speechSynthesis.speak(utterance);
+        }
+
+        function captureImage() {
+            // Simulate camera capture
+            alert('Camera functionality would be implemented here');
+        }
+
+        // Offline Detection
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        function updateOnlineStatus() {
+            const badge = document.querySelector('.offline-badge');
+            if (!navigator.onLine) {
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
